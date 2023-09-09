@@ -22,6 +22,23 @@ org 40000
   call basexy
   call splayr
 
+; Fill play area with mushrooms
+  ld a, 68
+  ld ($5c8d), a
+  ld b, 50
+mush_loop:
+  ld a, 22
+  rst 16
+  call random
+  and 15
+  rst 16
+  call random
+  and 31
+  rst 16
+  ld a, $91
+  rst 16
+  djnz mush_loop
+
 ; Main loop
 main: equ $
 ; Delete player
@@ -121,7 +138,21 @@ wspace:
   rst 16
   ret
 
+; Generate pseudo-random number
+random:
+  ld hl, (seed)
+  ld a, h
+  and 31
+  ld h, a
+  ld a, (hl)
+  inc hl
+  ld (seed), hl
+  ret
+seed: db 0
+
 ; User graphics
-blocks: db 16, 16, 56, 56, 124, 124, 254, 254
+blocks:
+  db 16, 16, 56, 56, 124, 124, 254, 254   ; Player
+  db 24,126,255,255,60,60,60,60           ; Mushroom
 
 end 40000
